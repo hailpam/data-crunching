@@ -17,7 +17,7 @@ $> pip install -r requirements
 # Scripts
 
 ## ```orders-exporter.py```
-Exports orders from the JSON format to CSV.
+Exports orders from the JSON format to the CSV.
 
 It requires an API key in input:
 
@@ -28,6 +28,7 @@ orders-exporter.py: error: the following arguments are required: -k/--key
 ```
 
 To access the documentation:
+
 ```
 $> python orders-exporter.py -h
 usage: orders-exporter.py [-h] -k KEY
@@ -40,6 +41,7 @@ optional arguments:
 ```
 
 To run it succssfully:
+
 ```
 $> python orders-exporter.py -k <specific_api_key>
 info: loaded orders...

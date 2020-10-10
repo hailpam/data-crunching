@@ -24,6 +24,12 @@ class Item:
         self.tax = tax
         self.qty = qty
     
+    def to_header(self):
+        '''
+            Header columns formatting string.
+        '''
+        return '%s,%s,%s,%s,%s,%s,%s,%s' % ('i.product_id', 'i.sku', 'i.name', 'i.price', 'i.discount', 'i.tax_id', 'i.tax', 'i.qty')
+
     def to_csv(self):
         '''
             Export to CSV the deserialized version of the data.
@@ -46,6 +52,12 @@ class Customer:
         self.state = state
         self.country_iso = country_iso
     
+    def to_header(self):
+        '''
+            Header columns formatting string.
+        '''
+        return '%s,%s,%s,%s,%s,%s' % ('c.name', 'c.address', 'c.zipcode', 'c.city', 'c.state', 'c.country_iso')
+
     def to_csv(self):
         '''
             Export to CSV the deserialized version of the data.
@@ -68,7 +80,13 @@ class Shipment:
         self.fees_shipping = fees_shipping if fees_shipping else 'No fees shipping'
         self.fees_payment = fees_payment if fees_payment else 'No fees payment'
         self.fees_extra = fees_extra if fees_extra else 'No fees extra'
-    
+
+    def to_header(self):
+        '''
+            Header columns formatting string.
+        '''
+        return '%s,%s,%s,%s,%s,%s,%s,%s' % ('s.weight', 's.date', 's.carrier', 's.shipped', 's.shipping_confirmed', 's.fees_shipping', 's.fees_payment', 's.fees_extra')
+
     def to_csv(self):
         '''
             Export to CSV the deserialized version of the data.
@@ -92,6 +110,12 @@ class Order:
         self.items = []
         self.shipment = shipment
     
+    def to_header(self):
+        '''
+            Header columns formatting string.
+        '''
+        return '%s,%s,%s,%s,%s' % ('o.order_id', 'o.date', 'o.number', 'o.code', 'o.payment_type')
+
     def to_csv(self):
         '''
             Export to CSV the deserialized version of the data.
@@ -138,13 +162,12 @@ def export_to_csv(orders):
     try:
         now = datetime.now()
         f = open(now.strftime('%Y%m%d_%H%M%S_export.csv'), 'w')
-        f.write('\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n' % 
-            ('o.order_id', 'o.date', 'o.number', 'o.code', 'o.payment_type', 
-            'c.name', 'c.address', 'c.zipcode', 'c.city', 'c.state', 'c.country_iso', 
-            'i.product_id', 'i.sku', 'i.name', 'i.price', 'i.discount', 'i.tax_id', 'i.tax', 'i.qty',
-            's.weight', 's.date', 's.carrier', 's.shipped', 's.shipping_confirmed', 's.fees_shipping', 's.fees_payment', 's.fees_extra'))
+        header = False
         for order in orders:
             for item in order.items:
+                if not header:
+                    f.write('%s,%s,%s,%s\n' % (order.to_header(), order.customer.to_header(), item.to_header(), order.shipment.to_header()))
+                    header = True
                 f.writelines('%s,%s,%s,%s\n' % (order.to_csv(), order.customer.to_csv(), item.to_csv(), order.shipment.to_csv()))
     except Exception as e:
         print('error: unable to export to CSV: %s' % e)
@@ -159,6 +182,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Exports JSON orders data into CSV format.')
     parser.add_argument('-k', '--key', type=str, required=True, help='API key to be used to perform the REST request to the backend')
     args = parser.parse_args()
+    
     return args
 
 def main():
