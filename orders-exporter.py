@@ -105,7 +105,8 @@ class Order:
     '''
     def __init__(self, order_id, date, number, code, payment_type, customer, shipment):
         self.id = order_id
-        self.date = date
+        self.date = date.split('T')[0]
+        self.time = date.split('T')[1]
         self.number = number
         self.code = code
         self.payment_type = payment_type
@@ -117,16 +118,16 @@ class Order:
         '''
             Header columns formatting string.
         '''
-        return '%s,%s,%s,%s,%s' % ('o.order_id', 'o.date', 'o.number', 'o.code', 'o.payment_type')
+        return '%s,%s,%s,%s,%s,%s' % ('o.order_id', 'o.date', 'o.time', 'o.number', 'o.code', 'o.payment_type')
 
     def to_csv(self):
         '''
             Export to CSV the deserialized version of the data.
         '''
-        return '\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (self.id, self.date, self.number, self.code, self.payment_type)
+        return '\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (self.id, self.date, self.time, self.number, self.code, self.payment_type)
 
     def __str__(self):
-        s = '%s, %s, %s, %s, %s, %s\n' % (self.id, self.date, self.number, self.code, self.payment_type, self.customer)
+        s = '%s, %s, %s, %s, %s, %s, %s\n' % (self.id, self.date, self.time, self.number, self.code, self.payment_type, self.customer)
         s += '\t%s\n' % self.customer
         s += '\t%s\n' % self.shipment
         for item in self.items:
