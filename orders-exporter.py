@@ -3,6 +3,9 @@ import json
 import time
 import argparse
 import locale
+import sqlite3
+import os
+import re
 
 from datetime import datetime
 
@@ -10,6 +13,9 @@ BASE_URL = 'https://www.gestionalesmarty.com/titanium'
 API_URI = 'V2/Api/Sales_Orders'
 METHOD = 'list'
 
+SQL_INSERT = 'INSERT INTO orders VALUES (%s,%s,%s,%s)'
+
+DB_FOLDER = 'db'
 
 class Item:
     '''
@@ -179,8 +185,56 @@ def export_to_csv(orders):
         if f:
             f.close()
 
-def export_to_dsv(orders):
-    pass
+def create_sqlite_db():
+    '''
+        Make sure that a DB file is created in case of non-existence.
+    '''
+    print('info: creating the DB...')
+    try:
+        os.stat('%s/' % DB_FOLDER)    
+    except:
+        os.mkdir('%s/' % DB_FOLDER)
+    
+    try:
+        conn = sqlite3.connect('%s/orders.db' % DB_FOLDER)
+        f = open('statements.sql', 'r')
+        lines = f.readlines()
+        text = ''.join(lines)
+        match = re.search(r'(?P<create>CREATE TABLE orders \(\n(.*\n)+\);)', text)
+        conn.execute(match.group('create'))
+    finally:
+        if f:
+            f.close()
+        if conn:
+            conn.commit()
+            conn.close()
+
+def export_to_sqlite(orders):
+    '''
+        Export the internal deserialized version of the data into a SQLite database. The SQLite database can be then re-used from Excel
+        using an ODBC connection: data can be sliced and diced using simple but effective Pivot tables.
+    '''
+    try:
+        os.stat('%s/orders.db' % DB_FOLDER)
+    except:
+        create_sqlite_db()
+    
+    try:
+        conn = sqlite3.connect('%s/orders.db' % DB_FOLDER)
+        rows = conn.execute('SELECT distinct(o_order_id) FROM orders')
+        ids = set()
+        for row in rows:
+            ids.add(row[0])
+        for order in orders:
+            for item in order.items:
+                if not order.id in ids:
+                    conn.execute(SQL_INSERT % (order.to_csv(), order.customer.to_csv(), item.to_csv(), order.shipment.to_csv()))
+    except Exception as e:
+        print('error: unable to load SQLite database: %s' % e)
+    finally:
+        if conn:
+            conn.commit()
+            conn.close()
 
 def parse_arguments():
     '''
@@ -189,6 +243,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Exports JSON orders data into CSV format.')
     parser.add_argument('-k', '--key', type=str, required=True, help='API key to be used to perform the REST request to the backend')
     parser.add_argument('-l', '--locale', type=str, required=False, help='Specify the locale: it_IT for italian')
+    parser.add_argument('-d', '--db', action='store_true', required=False, help='Instruct the tool to load a SQLite database up')
     args = parser.parse_args()
     
     return args
@@ -197,12 +252,18 @@ def main():
     args = parse_arguments()
     if args.locale:
         locale.setlocale(locale.LC_ALL, args.locale)
+    
     orders = load_data(args.key)
     print('info: loaded orders...')
     for order in orders:
         print(order)
+    
     export_to_csv(orders)
-    print('info: export successul')
+    print('info: CSV export successul')
+
+    if args.db:
+        export_to_sqlite(orders)
+        print('info: SQLite loading successful')
 
 if __name__ == "__main__":
     main()
