@@ -2,12 +2,14 @@ import requests
 import json
 import time
 import argparse
+import locale
 
 from datetime import datetime
 
 BASE_URL = 'https://www.gestionalesmarty.com/titanium'
 API_URI = 'V2/Api/Sales_Orders'
 METHOD = 'list'
+
 
 class Item:
     '''
@@ -18,11 +20,11 @@ class Item:
         self.product_id = product_id
         self.sku = sku
         self.name = name
-        self.price = price
-        self.discount = discount
-        self.tax_id = tax_id
-        self.tax = tax
-        self.qty = qty
+        self.price = locale.format('%f', float(price))
+        self.discount = locale.format('%f', float(discount))
+        self.tax_id = locale.format('%f', float(tax_id))
+        self.tax = locale.format('%f', float(tax))
+        self.qty = locale.format('%f', float(qty))
     
     def to_header(self):
         '''
@@ -71,30 +73,31 @@ class Shipment:
     '''
         Shipment info. It enlists relevant attributes related to the shipment as well as to the carrier.
     '''
-    def __init__(self, weight, date, carrier, shipped, shipping_confirmed, fees_shipping, fees_payment, fees_extra):
+    def __init__(self, weight, date, carrier, shipped, shipping_confirmed, fees_shipping, fees_payment, fees_extra, locked):
         self.weight = weight if weight else 'No weight'
         self.date = date if date else 'No date'
         self.carrier = carrier if carrier else 'No carrier'
         self.shipped = shipped if shipped else 'No shipped'
-        self.shipping_confirmed = shipping_confirmed if shipping_confirmed else 'No shipping'
-        self.fees_shipping = fees_shipping if fees_shipping else 'No fees shipping'
-        self.fees_payment = fees_payment if fees_payment else 'No fees payment'
-        self.fees_extra = fees_extra if fees_extra else 'No fees extra'
+        self.shipping_confirmed = locale.format('%f', float(shipping_confirmed)) if shipping_confirmed else 'No shipping'
+        self.fees_shipping = locale.format('%f', float(fees_shipping)) if fees_shipping else 'No fees shipping'
+        self.fees_payment = locale.format('%f', float(fees_payment)) if fees_payment else 'No fees payment'
+        self.fees_extra = locale.format('%f', float(fees_extra)) if fees_extra else 'No fees extra'
+        self.locked = locale.format('%f', float(locked)) if locked else 'No locked'
 
     def to_header(self):
         '''
             Header columns formatting string.
         '''
-        return '%s,%s,%s,%s,%s,%s,%s,%s' % ('s.weight', 's.date', 's.carrier', 's.shipped', 's.shipping_confirmed', 's.fees_shipping', 's.fees_payment', 's.fees_extra')
+        return '%s,%s,%s,%s,%s,%s,%s,%s,%s' % ('s.weight', 's.date', 's.carrier', 's.shipped', 's.shipping_confirmed', 's.fees_shipping', 's.fees_payment', 's.fees_extra', 's.locked')
 
     def to_csv(self):
         '''
             Export to CSV the deserialized version of the data.
         '''
-        return '\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (self.weight, self.date, self.carrier, self.shipped, self.shipping_confirmed, self.fees_shipping, self.fees_payment, self.fees_extra)
+        return '\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (self.weight, self.date, self.carrier, self.shipped, self.shipping_confirmed, self.fees_shipping, self.fees_payment, self.fees_extra, self.locked)
 
     def __str__(self):
-        return '%s, %s, %s, %s, %s, %s, %s, %s' % (self.weight, self.date, self.carrier, self.shipped, self.shipping_confirmed, self.fees_shipping, self.fees_payment, self.fees_extra)
+        return '%s, %s, %s, %s, %s, %s, %s, %s, %s' % (self.weight, self.date, self.carrier, self.shipped, self.shipping_confirmed, self.fees_shipping, self.fees_payment, self.fees_extra, self.locked)
 
 class Order:
     '''
@@ -144,7 +147,7 @@ def load_data(api_key):
     
     for order in orders:
         c = Customer(order['billing_address']['name'], order['billing_address']['address'], order['billing_address']['zipcode'], order['billing_address']['city'], order['billing_address']['state'], order['billing_address']['country_iso'])
-        s = Shipment(order['weight'], order['shipping_date'], order['carrier'], order['shipped'], order['shipping_confirmed'], order['fees']['shipping'], order['fees']['payment'], order['fees']['extra'])
+        s = Shipment(order['weight'], order['shipping_date'], order['carrier'], order['shipped'], order['shipping_confirmed'], order['fees']['shipping'], order['fees']['payment'], order['fees']['extra'], order['locked'])
         o = Order(order['id'], order['date'], order['number'], order['code'], order['payment_type'], c, s)
         rows = order['rows']
         for row in rows:
@@ -175,18 +178,24 @@ def export_to_csv(orders):
         if f:
             f.close()
 
+def export_to_dsv(orders):
+    pass
+
 def parse_arguments():
     '''
         Parse input arguments. Passing the API key is defined as mandatory.
     '''
     parser = argparse.ArgumentParser(description='Exports JSON orders data into CSV format.')
     parser.add_argument('-k', '--key', type=str, required=True, help='API key to be used to perform the REST request to the backend')
+    parser.add_argument('-l', '--locale', type=str, required=False, help='Specify the locale: it_IT for italian')
     args = parser.parse_args()
     
     return args
 
 def main():
     args = parse_arguments()
+    if args.locale:
+        locale.setlocale(locale.LC_ALL, args.locale)
     orders = load_data(args.key)
     print('info: loaded orders...')
     for order in orders:
