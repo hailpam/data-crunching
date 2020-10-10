@@ -1,6 +1,21 @@
 # Overview
 Collection of scripts to play with data.
 
+# Prerequisite
+Following prerequisites should be satisfied in order to run successfully the project:
+
+- Python 3.x.
+- All dependencies installed.
+
+## Dependencies Installation
+To install the dependencies, type the following command from the prompt.
+
+```
+$> pip install -r requirements
+```
+
+# Scripts
+
 ## ```orders-exporter.py```
 Exports orders from the JSON format to CSV.
 
