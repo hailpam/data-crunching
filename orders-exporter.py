@@ -244,6 +244,7 @@ def parse_arguments():
     parser.add_argument('-k', '--key', type=str, required=True, help='API key to be used to perform the REST request to the backend')
     parser.add_argument('-l', '--locale', type=str, required=False, help='Specify the locale: it_IT for italian')
     parser.add_argument('-d', '--db', action='store_true', required=False, help='Instruct the tool to load a SQLite database up')
+    parser.add_argument('-p', '--path', type=str, required=False, help='Define the path pointing to the DB. If not specifcied, ./db/ is used')
     args = parser.parse_args()
     
     return args
@@ -252,6 +253,9 @@ def main():
     args = parse_arguments()
     if args.locale:
         locale.setlocale(locale.LC_ALL, args.locale)
+    if args.path:
+        global DB_FOLDER 
+        DB_FOLDER = args.path
     
     orders = load_data(args.key)
     print('info: loaded orders...')
