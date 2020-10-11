@@ -171,7 +171,8 @@ def export_to_csv(orders):
     '''
     try:
         now = datetime.now()
-        f = open(now.strftime('%Y%m%d_%H%M%S_export.csv'), 'w')
+        csv_name = '%s_%s_export.csv' % (now.strftime('%Y%m%d_%H%M%S'), locale.getlocale()[0])
+        f = open(csv_name, 'w')
         header = False
         for order in orders:
             for item in order.items:
@@ -185,7 +186,7 @@ def export_to_csv(orders):
         if f:
             f.close()
 
-def create_sqlite_db():
+def create_sqlite_db(db_name):
     '''
         Make sure that a DB file is created in case of non-existence.
     '''
@@ -196,7 +197,7 @@ def create_sqlite_db():
         os.mkdir('%s/' % DB_FOLDER)
     
     try:
-        conn = sqlite3.connect('%s/orders.db' % DB_FOLDER)
+        conn = sqlite3.connect('%s/%s' % (DB_FOLDER, db_name))
         f = open('statements.sql', 'r')
         lines = f.readlines()
         text = ''.join(lines)
@@ -214,21 +215,27 @@ def export_to_sqlite(orders):
         Export the internal deserialized version of the data into a SQLite database. The SQLite database can be then re-used from Excel
         using an ODBC connection: data can be sliced and diced using simple but effective Pivot tables.
     '''
+    db_name = 'orders_%s.db' % locale.getlocale()[0]
     try:
-        os.stat('%s/orders.db' % DB_FOLDER)
+        os.stat('%s/%s' % (DB_FOLDER, db_name))
     except:
-        create_sqlite_db()
+        create_sqlite_db(db_name)
     
     try:
-        conn = sqlite3.connect('%s/orders.db' % DB_FOLDER)
+        conn = sqlite3.connect('%s/%s' % (DB_FOLDER, db_name))
         rows = conn.execute('SELECT distinct(o_order_id) FROM orders')
         ids = set()
         for row in rows:
             ids.add(row[0])
+        cntr = 0
         for order in orders:
             for item in order.items:
                 if not order.id in ids:
                     conn.execute(SQL_INSERT % (order.to_csv(), order.customer.to_csv(), item.to_csv(), order.shipment.to_csv()))
+                else:
+                    cntr += 1
+        if cntr > 0:
+            print('warning: %s rows not written as duplicate(s) from previous run' % cntr)
     except Exception as e:
         print('error: unable to load SQLite database: %s' % e)
     finally:
@@ -253,6 +260,8 @@ def main():
     args = parse_arguments()
     if args.locale:
         locale.setlocale(locale.LC_ALL, args.locale)
+    else:
+        locale.setlocale(locale.LC_ALL, 'en_GB')
     if args.path:
         global DB_FOLDER 
         DB_FOLDER = args.path

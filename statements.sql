@@ -36,3 +36,11 @@ CREATE TABLE orders (
 
 -- SELECT DISTINCT order identifiers
 SELECT distinct(o_order_id) FROM orders;
+
+-- SELECT queries
+SELECT o_order_id, 
+    c_name, 
+    SUM(i_price) AS "spent", 
+    SUM(i_qty) AS "items"
+FROM orders
+GROUP BY o_order_id, c_name;
