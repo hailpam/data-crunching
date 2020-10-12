@@ -21,7 +21,7 @@ Follow the instructions from the [download page](https://www.sqlite.org/download
 # Scripts
 
 ## ```orders-exporter.py```
-Exports orders from the JSON format to the CSV.
+Exports orders from the JSON format to the CSV and optionally to a SQLite database.
 
 It requires an API key in input:
 
@@ -54,3 +54,10 @@ info: loaded orders...
 [...]
 info: export successul
 ```
+
+# Notebooks
+
+## ```heatmap.ipynb```
+Makes use of the SQLite data to plot a Heatmap which shows the concentration of orders during the day.
+
+![Order Heatmap](img/heatmap.png)
