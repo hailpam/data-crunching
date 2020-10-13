@@ -59,7 +59,6 @@ def load_database(api_key):
     loaded_orders = []
 
     iterations = math.ceil(find_last(api_key) / NR_RECORDS_LIMIT_PER_CALL)
-    print(iterations)
     for itr in range(iterations):
         s = int(time.time() * 10**3)
         params = 'limit=%d&offset=%d' % (NR_RECORDS_LIMIT_PER_CALL, itr * NR_RECORDS_LIMIT_PER_CALL)
