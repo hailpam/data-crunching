@@ -11,7 +11,7 @@ Following prerequisites should be satisfied in order to run successfully the pro
 ## Dependencies Installation
 To install the dependencies, type the following command from the prompt.
 
-```
+```bash
 $> pip install -r requirements
 ```
 
@@ -25,13 +25,13 @@ Exports orders from the JSON format to the CSV and optionally to a SQLite databa
 
 It requires an API key in input:
 
-```
+```bash
 $> python orders-exporter.py
 usage: orders-exporter.py [-h] -k KEY [-l LOCALE] [-d] [-p PATH]
 orders-exporter.py: error: the following arguments are required: -k/--key
 ```
 
-```
+```bash
 $> python orders-exporter.py --help
 usage: orders-exporter.py [-h] -k KEY [-l LOCALE] [-d] [-p PATH]
 
@@ -48,11 +48,17 @@ optional arguments:
 
 To run it succssfully:
 
-```
+```bash
 $> python orders-exporter.py -k <specific_api_key> -k en_EN -d -p <db_path>
 info: loaded orders...
 [...]
 info: export successul
+```
+
+## ```orders-dumper.py```
+Imports all data from orders, converting the JSON into a SQLite rows.
+
+```bash
 ```
 
 # Notebooks

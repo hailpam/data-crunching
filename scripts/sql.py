@@ -1,7 +1,7 @@
--- DROP TABLE orders
-DROP TABLE orders;
 
--- CREATE TABLE orders
+SQL_DROP_TABLE = 'DROP TABLE orders;'
+
+SQL_CREATE_TABLE = """
 CREATE TABLE orders (
     o_order_id text,
     o_date text,
@@ -33,8 +33,11 @@ CREATE TABLE orders (
     s_fees_extra text,
     s_locked text
 );
+"""
 
--- UPDATE row
+SQL_INSERT = 'INSERT INTO orders VALUES (%s,%s,%s,%s)'
+
+SQL_UPDATE = """
 UPDATE orders
 SET o_date = "%s",
     o_time = "%s",
@@ -66,14 +69,47 @@ SET o_date = "%s",
     s_locked = "%s"
 WHERE
     o_order_id = "%s"
+"""
 
--- SELECT DISTINCT order identifiers
-SELECT distinct(o_order_id) FROM orders;
+SQL_SELECT_DISTINCT_ID = 'SELECT distinct(o_order_id) FROM orders'
 
--- SELECT queries
-SELECT o_order_id, 
-    c_name, 
-    SUM(i_price) AS "spent", 
-    SUM(i_qty) AS "items"
-FROM orders
-GROUP BY o_order_id, c_name;
+def insert_record(order, item):
+    return SQL_INSERT % (
+        order.to_csv(), 
+        order.customer.to_csv(), 
+        item.to_csv(), 
+        order.shipment.to_csv()
+    )
+
+def update_record(order, item):
+    return SQL_UPDATE % (
+        order.date,
+        order.time,
+        order.number,
+        order.code,
+        order.payment_type,
+        order.customer.name,
+        order.customer.address,
+        order.customer.zipcode,
+        order.customer.city,
+        order.customer.state,
+        order.customer.country_iso,
+        item.product_id,
+        item.sku,
+        item.name,
+        item.price,
+        item.discount,
+        item.tax_id,
+        item.tax,
+        item.qty,
+        order.shipment.weight,
+        order.shipment.date,
+        order.shipment.carrier,
+        order.shipment.shipped,
+        order.shipment.shipping_confirmed,
+        order.shipment.fees_shipping,
+        order.shipment.fees_payment,
+        order.shipment.fees_extra,
+        order.shipment.locked,
+        order.id
+    )
