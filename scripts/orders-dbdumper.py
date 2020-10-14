@@ -14,9 +14,9 @@ def parse_arguments():
         Parse input arguments. Passing the API key is defined as mandatory.
     '''
     parser = argparse.ArgumentParser(description='Exports all JSON orders data into CSV format and optionally into a SQLite DB.')
-    parser.add_argument('-k', '--key', type=str, required=True, help='API key to be used to perform the REST request to the backend')
+    parser.add_argument('-k', '--key', type=str, required=True, help='API key to be used to perform the REST request to the backend.')
     parser.add_argument('-l', '--locale', type=str, required=False, help='Specify the locale: it_IT for italian. Otherwise machine default one.')
-    parser.add_argument('-p', '--path', type=str, required=True, help='Define datastore base path (CSV and SQLite archive will be based out of it)')
+    parser.add_argument('-p', '--path', type=str, required=True, help='Define datastore base path to csv/ and db/ folders (csv/ and db/ folders should be already created).')
 
     args = parser.parse_args()
     
@@ -37,8 +37,9 @@ def main():
     
     orders = load_orders_database(args.key)
     print('info: loaded %d order(s)...' % len(orders))
-    for order in orders:
-        print(order)
+    print(orders[0])
+    print('info: all records between first and last')
+    print(orders[-1])
     
     export_to_csv(orders, datastore_path)
     print('info: CSV export successul %d order(s)' % len(orders))

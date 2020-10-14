@@ -8,22 +8,20 @@ from model import *
 from sql import *
 from common import *
 
+
 def parse_arguments():
     '''
         Parse input arguments. Passing the API key is defined as mandatory.
     '''
     parser = argparse.ArgumentParser(description='Incrementally exports JSON orders data into CSV format and optionally into a SQLite DB.')
-    parser.add_argument('-k', '--key', type=str, required=True, help='API key to be used to perform the REST request to the backend')
+    parser.add_argument('-k', '--key', type=str, required=True, help='API key to be used to perform the REST request to the backend.')
     parser.add_argument('-l', '--locale', type=str, required=False, help='Specify the locale: it_IT for italian. Otherwise machine default one.')
-    parser.add_argument('-d', '--db', action='store_true', required=False, help='Instruct the tool to load a SQLite database up')
-    parser.add_argument('-p', '--path', type=str, required=True, help='Define datastore base path (CSV and SQLite archive will be based out of it)')
-    parser.add_argument('-n', '--number', type=int, required=True, help='Define how many records each REST call should pull down')
+    parser.add_argument('-d', '--db', action='store_true', required=False, help='Instruct the tool to load a SQLite database up.')
+    parser.add_argument('-p', '--path', type=str, required=True, help='Define datastore base path to csv/ and db/ folders (csv/ and db/ folders should be already created).')
+    parser.add_argument('-n', '--number', type=int, required=True, help='Define how many records each REST call should pull down.')
     args = parser.parse_args()
     
     return args
-
-# TODO - control for directories
-# error: unable to export to CSV: [Errno 2] No such file or directory: '/Users/pmaresca/Developments/Workspaces/Python/data-crunching/csv/20201014_173749_en_GB_export.csv'
 
 def main():
     args = parse_arguments()
@@ -41,8 +39,9 @@ def main():
     
     orders = load_orders_pages(args.key, nr_records)
     print('info: loaded %d order(s)...' % len(orders))
-    for order in orders:
-        print(order)
+    print(orders[0])
+    print('info: all records between first and last')
+    print(orders[-1])
     
     export_to_csv(orders, datastore_path)
     print('info: CSV export successul %d order(s)' % len(orders))
