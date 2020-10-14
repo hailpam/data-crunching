@@ -39,13 +39,13 @@ Incrementally exports JSON orders data into CSV format and optionally into a SQL
 
 optional arguments:
   -h, --help            show this help message and exit
-  -k KEY, --key KEY     API key to be used to perform the REST request to the backend
+  -k KEY, --key KEY     API key to be used to perform the REST request to the backend.
   -l LOCALE, --locale LOCALE
                         Specify the locale: it_IT for italian. Otherwise machine default one.
-  -d, --db              Instruct the tool to load a SQLite database up
-  -p PATH, --path PATH  Define datastore base path (CSV and SQLite archive will be based out of it)
+  -d, --db              Instruct the tool to load a SQLite database up.
+  -p PATH, --path PATH  Define datastore base path to csv/ and db/ folders (csv/ and db/ folders should be already created).
   -n NUMBER, --number NUMBER
-                        Define how many records each REST call should pull down
+                        Define how many records each REST call should pull down.
 ```
 
 To run it succssfully:
@@ -76,10 +76,10 @@ Exports all JSON orders data into CSV format and optionally into a SQLite DB.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -k KEY, --key KEY     API key to be used to perform the REST request to the backend
+  -k KEY, --key KEY     API key to be used to perform the REST request to the backend.
   -l LOCALE, --locale LOCALE
                         Specify the locale: it_IT for italian. Otherwise machine default one.
-  -p PATH, --path PATH  Define datastore base path (CSV and SQLite archive will be based out of it)
+  -p PATH, --path PATH  Define datastore base path to csv/ and db/ folders (csv/ and db/ folders should be already created).
 ```
 
 To run it succssfully:
