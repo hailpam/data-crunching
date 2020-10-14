@@ -30,8 +30,7 @@ def main():
     datastore_path = args.path
     nr_records = args.number
 
-    # orders = load_data(args.key, nr_records)
-    orders = load_database(args.key)
+    orders = load_data(args.key, nr_records)
     print('info: loaded %d order(s)...' % len(orders))
     for order in orders:
         print(order)
