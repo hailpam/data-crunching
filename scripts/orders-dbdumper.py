@@ -38,7 +38,7 @@ def main():
     orders = load_orders_database(args.key)
     print('info: loaded %d order(s)...' % len(orders))
     print(orders[0])
-    print('info: all records between first and last')
+    print('info: all records between FIRST and LAST\n')
     print(orders[-1])
     
     export_to_csv(orders, datastore_path)
