@@ -35,13 +35,17 @@ class Customer:
         Customer Item. It enlists relevant attributes related to the customr submitting
         a given order.
     '''
-    def __init__(self, name, address, zipcode, city, state, country_iso):
+    def __init__(self, name, address, zipcode, city, state, country_iso, email=None, identifier=None, phone=None, business_name=None):
         self.name = name
         self.address = address
         self.zipcode = zipcode
         self.city = city
         self.state = state
         self.country_iso = country_iso
+        self.email = email
+        self.id = identifier
+        self.phone = phone
+        self.business_name = business_name
     
     def to_header(self):
         '''

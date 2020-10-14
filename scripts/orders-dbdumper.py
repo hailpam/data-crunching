@@ -1,5 +1,6 @@
 import argparse
 import locale
+import sys
 
 from datetime import datetime
 
@@ -29,7 +30,12 @@ def main():
         locale.setlocale(locale.LC_ALL, 'en_GB')
     datastore_path = args.path
 
-    orders = load_database(args.key)
+    if not is_path_existent('%s/%s' % (datastore_path, 'csv')):
+        sys.exit(1)
+    if not is_path_existent('%s/%s' % (datastore_path, 'db')):
+        sys.exit(1)
+    
+    orders = load_orders_database(args.key)
     print('info: loaded %d order(s)...' % len(orders))
     for order in orders:
         print(order)

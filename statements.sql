@@ -15,6 +15,7 @@ CREATE TABLE orders (
     c_city text,
     c_state text,
     c_country_iso text,
+    c_id text,
     i_product_id text,
     i_sku text,
     i_name text,

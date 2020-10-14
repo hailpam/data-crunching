@@ -71,6 +71,11 @@ WHERE
     o_order_id = "%s"
 """
 
+SQL_DELETE = """
+DELETE FROM orders
+WHERE o_order_id = "%s";
+"""
+
 SQL_SELECT_DISTINCT_ID = 'SELECT distinct(o_order_id) FROM orders'
 
 def insert_record(order, item):
@@ -111,5 +116,10 @@ def update_record(order, item):
         order.shipment.fees_payment,
         order.shipment.fees_extra,
         order.shipment.locked,
+        order.id
+    )
+
+def delete_records(order):
+    return SQL_DELETE % (
         order.id
     )

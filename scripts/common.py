@@ -30,7 +30,7 @@ def deserialize(orders, loaded_orders):
         Convert JSON orders into an in-memory deserialized version.
     '''
     for order in orders:
-        c = Customer(order['billing_address']['name'], order['billing_address']['address'], order['billing_address']['zipcode'], order['billing_address']['city'], order['billing_address']['state'], order['billing_address']['country_iso'])
+        c = Customer(order['billing_address']['name'], order['billing_address']['address'], order['billing_address']['zipcode'], order['billing_address']['city'], order['billing_address']['state'], order['billing_address']['country_iso'], identifier=order['customer_id'])
         s = Shipment(order['weight'], order['shipping_date'], order['carrier'], order['shipped'], order['shipping_confirmed'], order['fees']['shipping'], order['fees']['payment'], order['fees']['extra'], order['locked'])
         o = Order(order['id'], order['date'], order['number'], order['code'], order['payment_type'], c, s)
         rows = order['rows']
@@ -39,7 +39,7 @@ def deserialize(orders, loaded_orders):
             o.items.append(i)
         loaded_orders.append(o)
 
-def find_last(api_key):
+def find_last_order(api_key):
     '''
         Find the last inserted order. According to its ID, the database is going to be rebuilt.
     '''
@@ -52,9 +52,9 @@ def find_last(api_key):
     
     return int(orders[0]['id'])
 
-def load_database(api_key):
+def load_orders_database(api_key):
     '''
-        Load incrementally the entire database up. It transforms it into an internal format which is then re-used for export.
+        Load orders incrementally the entire database up. It transforms it into an internal format which is then re-used for export.
     '''
     loaded_orders = []
 
@@ -75,9 +75,9 @@ def load_database(api_key):
         
     return loaded_orders
 
-def load_pages(api_key, nr_records):
+def load_orders_pages(api_key, nr_records):
     '''
-        Load the data up. It transforms it into an internal format which is then re-used for export.
+        Load the orders data up. It transforms it into an internal format which is then re-used for export.
     '''
     loaded_orders = []
     
@@ -97,6 +97,12 @@ def load_pages(api_key, nr_records):
         deserialize(orders, loaded_orders)
         
     return loaded_orders
+
+def load_customers(api_key):
+    '''
+        Load customer data up. It transforms it into an internal format which is then re-used for export.
+    '''
+    loaded_customers = []
 
 def export_to_csv(orders, base_path):
     '''
@@ -179,11 +185,11 @@ def export_to_sqlite(orders, base_path):
         cntr = 0
         for order in orders:
             for item in order.items:
-                if not order.id in ids:
-                    conn.execute(insert_record(order, item))
-                else:
+                if order.id in ids:
                     cntr += 1
-                    conn.execute(update_record(order, item))
+                    conn.execute(delete_records(order))
+                    ids.remove(order.id)
+                conn.execute(insert_record(order, item))
         if cntr > 0:
             print('warning: %s row(s) were duplicated: update was made' % cntr)
         
@@ -194,3 +200,11 @@ def export_to_sqlite(orders, base_path):
         if conn:
             conn.commit()
             conn.close()
+
+def is_path_existent(path):
+    try:
+        os.stat(path)
+        return True
+    except:
+        print('error: [%s] is not existent' % path)
+        return False

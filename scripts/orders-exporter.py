@@ -1,5 +1,6 @@
 import argparse
 import locale
+import sys
 
 from datetime import datetime
 
@@ -21,6 +22,9 @@ def parse_arguments():
     
     return args
 
+# TODO - control for directories
+# error: unable to export to CSV: [Errno 2] No such file or directory: '/Users/pmaresca/Developments/Workspaces/Python/data-crunching/csv/20201014_173749_en_GB_export.csv'
+
 def main():
     args = parse_arguments()
     if args.locale:
@@ -29,8 +33,13 @@ def main():
         locale.setlocale(locale.LC_ALL, 'en_GB')
     datastore_path = args.path
     nr_records = args.number
-
-    orders = load_data(args.key, nr_records)
+    
+    if not is_path_existent('%s/%s' % (datastore_path, 'csv')):
+        sys.exit(1)
+    if not is_path_existent('%s/%s' % (datastore_path, 'db')):
+        sys.exit(1)
+    
+    orders = load_orders_pages(args.key, nr_records)
     print('info: loaded %d order(s)...' % len(orders))
     for order in orders:
         print(order)
