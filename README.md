@@ -1,4 +1,4 @@
-# Overview
+# Overview [![Build Status](https://travis-ci.org/hailpam/data-crunching.svg?branch=main)](https://travis-ci.org/hailpam/data-crunching)
 Collection of scripts to play with data.
 
 # Prerequisite
