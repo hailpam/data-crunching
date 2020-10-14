@@ -2,11 +2,10 @@ import argparse
 import locale
 
 from datetime import datetime
-# TBD - make it work with __init__.py
+
 from model import *  
 from sql import *
 from common import *
-
 
 def parse_arguments():
     '''
