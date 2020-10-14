@@ -98,4 +98,4 @@ info: SQLite loaded successfully with 4381 record(s)
 ## ```heatmap.ipynb```
 Makes use of the SQLite data to plot a Heatmap which shows the concentration of orders during the day.
 
-![Order Heatmap](img/heatmap.png)
+![Order Heatmap](docs/img/heatmap.png)
