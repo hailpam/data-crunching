@@ -1,5 +1,7 @@
 import locale
 
+from util import *
+
 class Item:
     '''
         Order Item. It enlists relevant attributes related to the specific item of the
@@ -36,16 +38,16 @@ class Customer:
         a given order.
     '''
     def __init__(self, name, address, zipcode, city, state, country_iso, email=None, identifier=None, phone=None, business_name=None):
-        self.name = name
-        self.address = address
+        self.name = name_to_camelcase(name) if name else name
+        self.address = name_to_camelcase(address) if address else address
         self.zipcode = zipcode
-        self.city = city
-        self.state = state
-        self.country_iso = country_iso
-        self.email = email
+        self.city = name_to_camelcase(city) if city else city
+        self.state = state.upper() if state else state
+        self.country_iso = country_iso.upper() if country_iso else country_iso
+        self.email = email.lower() if email else email
         self.id = identifier
         self.phone = phone
-        self.business_name = business_name
+        self.business_name = name_to_camelcase(business_name) if business_name else business_name
     
     def to_header(self):
         '''
