@@ -44,7 +44,7 @@ def find_last_order(api_key):
         Find the last inserted order. According to its ID, the database is going to be rebuilt.
     '''
     params = 'limit=%d&offset=%d' % (1, 0)
-    res = requests.get('%s/%s/%s?ApiKey=%s&%s' % (BASE_URL, API_URI, METHOD, api_key, params))
+    res = retryable_get(BASE_URL, API_URI, METHOD, api_key, params)
     orders = json.loads(res.text)
     if res.status_code != 200 or 'error' in res.text:
         print('error: not able to fetch data: %s' % res.text)
@@ -62,7 +62,7 @@ def load_orders_database(api_key):
     for itr in range(iterations):
         s = int(time.time() * 10**3)
         params = 'limit=%d&offset=%d' % (NR_RECORDS_LIMIT_PER_CALL, itr * NR_RECORDS_LIMIT_PER_CALL)
-        res = requests.get('%s/%s/%s?ApiKey=%s&%s' % (BASE_URL, API_URI, METHOD, api_key, params))
+        res = retryable_get(BASE_URL, API_URI, METHOD, api_key, params)
         
         print('info: iteration %d out of %d: took %dms' % (itr+1, iterations, int(time.time() * 10**3) - s))
         
@@ -85,7 +85,7 @@ def load_orders_pages(api_key, nr_records):
     for itr in range(iterations):
         s = int(time.time() * 10**3)
         params = 'limit=%d&offset=%d' % (NR_RECORDS_LIMIT_PER_CALL, itr * NR_RECORDS_LIMIT_PER_CALL)
-        res = requests.get('%s/%s/%s?ApiKey=%s&%s' % (BASE_URL, API_URI, METHOD, api_key, params))
+        res = retryable_get(BASE_URL, API_URI, METHOD, api_key, params)
         
         print('info: iteration %d out of %d: took %dms' % (itr+1, iterations, int(time.time() * 10**3) - s))
         
@@ -202,9 +202,28 @@ def export_to_sqlite(orders, base_path):
             conn.close()
 
 def is_path_existent(path):
+    '''
+        Check whether a path is already existent.
+    '''
     try:
         os.stat(path)
         return True
     except:
         print('error: [%s] is not existent' % path)
         return False
+
+def retryable_get(url, uri, method, key, params):
+    '''
+        Retries on network glitches. Instead of giving up and abandoning, it backs off to then retry
+        in a number of seconds proportial to the number of attempts.
+    '''
+    errors = 0
+    while True:
+        try:
+            res = requests.get('%s/%s/%s?ApiKey=%s&%s' % (url, uri, method, key, params))
+            return res
+        except Exception as e:
+            errors += 1
+            print('error: an exception was thrown: %s' % e)
+            print('warning: backing off %d seconds prior to retry...' % errors)
+            time.sleep(errors)
