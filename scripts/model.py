@@ -51,16 +51,16 @@ class Customer:
         '''
             Header columns formatting string.
         '''
-        return '%s,%s,%s,%s,%s,%s' % ('c.name', 'c.address', 'c.zipcode', 'c.city', 'c.state', 'c.country_iso')
+        return '%s,%s,%s,%s,%s,%s,%s' % ('c.name', 'c.id', 'c.address', 'c.zipcode', 'c.city', 'c.state', 'c.country_iso')
 
     def to_csv(self):
         '''
             Export to CSV the deserialized version of the data.
         '''
-        return '\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (self.name, self.address, self.zipcode, self.city, self.state, self.country_iso)
+        return '\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (self.name, self.id, self.address, self.zipcode, self.city, self.state, self.country_iso)
 
     def __str__(self):
-        return '%s, %s, %s, %s, %s, %s' % (self.name, self.address, self.zipcode, self.city, self.state, self.country_iso)
+        return '%s, %s, %s, %s, %s, %s, %s' % (self.name, self.id, self.address, self.zipcode, self.city, self.state, self.country_iso)
 
 class Shipment:
     '''
