@@ -75,7 +75,7 @@ WHERE
 
 SQL_DELETE = """
 DELETE FROM orders
-WHERE o_order_id = "%s";
+WHERE o_order_id = %d;
 """
 
 SQL_SELECT_DISTINCT_ID = 'SELECT distinct(o_order_id) FROM orders'
