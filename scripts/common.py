@@ -181,11 +181,11 @@ def export_to_sqlite(orders, base_path):
         rows = conn.execute(SQL_SELECT_DISTINCT_ID)
         ids = set()
         for row in rows:
-            ids.add(row[0])
+            ids.add(int(row[0]))
         cntr = 0
         for order in orders:
             for item in order.items:
-                if order.id in ids:
+                if int(order.id) in ids:
                     cntr += 1
                     conn.execute(delete_records(order))
                     ids.remove(order.id)

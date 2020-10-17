@@ -99,7 +99,7 @@ class Order:
         Order item. It enlists relevant attributes related to the order itself.
     '''
     def __init__(self, order_id, date, number, code, payment_type, customer, shipment):
-        self.id = order_id
+        self.id = int(order_id)
         self.date = date.split('T')[0]
         self.time = date.split('T')[1]
         self.number = number
@@ -122,7 +122,7 @@ class Order:
         return '%s,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (int(self.id), self.date, self.time, self.number, self.code, self.payment_type)
 
     def __str__(self):
-        s = '%s, %s, %s, %s, %s, %s, %s\n' % (self.id, self.date, self.time, self.number, self.code, self.payment_type, self.customer)
+        s = '%d, %s, %s, %s, %s, %s, %s\n' % (self.id, self.date, self.time, self.number, self.code, self.payment_type, self.customer)
         s += '\t%s\n' % self.customer
         s += '\t%s\n' % self.shipment
         for item in self.items:
