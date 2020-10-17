@@ -3,7 +3,7 @@ DROP TABLE orders;
 
 -- CREATE TABLE orders
 CREATE TABLE orders (
-    o_order_id text,
+    o_order_id int,
     o_date text,
     o_time text,
     o_number text,

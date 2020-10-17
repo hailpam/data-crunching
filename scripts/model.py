@@ -119,7 +119,7 @@ class Order:
         '''
             Export to CSV the deserialized version of the data.
         '''
-        return '\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (self.id, self.date, self.time, self.number, self.code, self.payment_type)
+        return '%s,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (int(self.id), self.date, self.time, self.number, self.code, self.payment_type)
 
     def __str__(self):
         s = '%s, %s, %s, %s, %s, %s, %s\n' % (self.id, self.date, self.time, self.number, self.code, self.payment_type, self.customer)
