@@ -31,8 +31,8 @@ def deserialize(orders, loaded_orders):
     '''
     for order in orders:
         c = Customer(order['billing_address']['name'], order['billing_address']['address'], order['billing_address']['zipcode'], order['billing_address']['city'], order['billing_address']['state'], order['billing_address']['country_iso'], identifier=order['customer_id'])
-        s = Shipment(order['weight'], order['shipping_date'], order['carrier'], order['shipped'], order['shipping_confirmed'], order['fees']['shipping'], order['fees']['payment'], order['fees']['extra'], order['locked'])
-        o = Order(order['id'], order['date'], order['number'], order['code'], order['payment_type'], c, s)
+        s = Shipment(order['weight'], order['shipping_date'], order['carrier'], order['shipped'], order['shipping_confirmed'], order['fees']['shipping'], order['fees']['payment'], order['fees']['extra'], order['locked'], order['canceled'], order['locked'])
+        o = Order(order['id'], order['date'], order['number'], order['code'], order['payment_type'], c, s, order['paid'], order['cod_value'], order['packages'], order['payments'])
         rows = order['rows']
         for row in rows:
             i = Item(row['id'], row['sku'], row['name'], row['price'], row['discount'], row['tax_id'], row['tax'], row['quantity'])
