@@ -1,7 +1,8 @@
 
-SQL_DROP_TABLE = 'DROP TABLE orders;'
+SQL_DROP_TABLE_ORDERS = 'DROP TABLE orders;'
+SQL_DROP_TABLE_CUSTOMERS = 'DROP TABLE customers;'
 
-SQL_CREATE_TABLE = """
+SQL_CREATE_TABLE_ORDERS = """
 CREATE TABLE orders (
     o_order_id int,
     o_date text,
@@ -14,7 +15,7 @@ CREATE TABLE orders (
     o_nr_packages text,
     o_nr_payments text,
     c_name text,
-    c_id text,
+    c_id int,
     c_address text,
     c_zipcode text,
     c_city text,
@@ -23,6 +24,8 @@ CREATE TABLE orders (
     c_email text,
     c_phone text,
     c_business_name text,
+    c_created_at text,
+    c_updated_at text,
     i_product_id text,
     i_sku text,
     i_name text,
@@ -45,9 +48,28 @@ CREATE TABLE orders (
 );
 """
 
-SQL_INSERT = 'INSERT INTO orders VALUES (%s,%s,%s,%s)'
+SQL_CREATE_TABLE_CUSTOMERS = """
+CREATE TABLE customers (
+    c_name text,
+    c_id int,
+    c_address text,
+    c_zipcode text,
+    c_city text,
+    c_state text,
+    c_country_iso text,
+    c_email text,
+    c_phone text,
+    c_business_name text,
+    c_created_at text,
+    c_updated_at text
+);
+"""
 
-SQL_UPDATE = """
+SQL_INSERT_ORDERS = 'INSERT INTO orders VALUES (%s,%s,%s,%s)'
+
+SQL_INSERT_CUSTOMERS = 'INSERT INTO customers VALUES (%s)'
+
+SQL_UPDATE_ORDERS = """
 UPDATE orders
 SET o_date = "%s",
     o_time = "%s",
@@ -59,7 +81,7 @@ SET o_date = "%s",
     o_nr_packages = "%s",
     o_nr_payments = "%s",
     c_name = "%s",
-    c_id = "%s",
+    c_id = "%d",
     c_address = "%s",
     c_zipcode = "%s",
     c_city = "%s",
@@ -68,6 +90,8 @@ SET o_date = "%s",
     c_email = "%s",
     c_phone = "%s",
     c_business_name = "%s",
+    c_created_at = "%s",
+    c_updated_at = "%s",
     i_product_id = "%s",
     i_sku = "%s",
     i_name = "%s",
@@ -88,26 +112,56 @@ SET o_date = "%s",
     s_fees_extra = "%s",
     s_locked = "%s"
 WHERE
-    o_order_id = "%s"
+    o_order_id = "%d"
 """
 
-SQL_DELETE = """
+SQL_UPDATE_CUSTOMERS = """
+UPDATE customers
+SET c_name = "%s",
+    c_address = "%s",
+    c_zipcode ="%s",
+    c_city = "%s",
+    c_state = "%s",
+    c_country_iso ="%s",
+    c_email ="%s",
+    c_phone = "%s",
+    c_business_name = "%s",
+    c_created_at ="%s",
+    c_updated_at ="%s"
+WHERE
+    c_id = %d
+"""
+
+SQL_DELETE_ORDERS = """
 DELETE FROM orders
 WHERE o_order_id = %d;
 """
 
-SQL_SELECT_DISTINCT_ID = 'SELECT distinct(o_order_id) FROM orders'
+SQL_DELETE_CUSTOMERS = """
+DELETE FROM customers
+WHERE c_id = %d;
+"""
 
-def insert_record(order, item):
-    return SQL_INSERT % (
+SQL_SELECT_DISTINCT_ID_ORDERS = 'SELECT distinct(o_order_id) FROM orders'
+
+SQL_SELECT_DISTINCT_ID_CUSTOMERS = 'SELECT distinct(c_id) FROM customers'
+SQL_SELECT_ALL_CUSTOMERS = 'SELECT * FROM customers;'
+
+def insert_record_orders(order, item):
+    return SQL_INSERT_ORDERS % (
         order.to_csv(), 
         order.customer.to_csv(), 
         item.to_csv(), 
         order.shipment.to_csv()
     )
 
-def update_record(order, item):
-    return SQL_UPDATE % (
+def insert_record_customers(customer):
+    return SQL_INSERT_CUSTOMERS % (
+        customer.to_csv()
+    )
+
+def update_record_orders(order, item):
+    return SQL_UPDATE_ORDERS % (
         order.date,
         order.time,
         order.number,
@@ -127,6 +181,8 @@ def update_record(order, item):
         order.customer.email,
         order.customer.phone,
         order.customer.business_name,
+        order.customer.created_at,
+        order.customer.updated_at,
         item.product_id,
         item.sku,
         item.name,
@@ -149,7 +205,23 @@ def update_record(order, item):
         order.id
     )
 
-def delete_records(order):
-    return SQL_DELETE % (
+def update_records_customers(customer):
+    return SQL_UPDATE_CUSTOMERS % (
+        customer.name,
+        customer.address,
+        customer.zipcode,
+        customer.city,
+        customer.state,
+        customer.country_iso,
+        customer.email,
+        customer.phone,
+        customer.business_name,
+        customer.created_at,
+        customer.updated_at,
+        customer.id
+    )
+
+def delete_records_orders(order):
+    return SQL_DELETE_ORDERS % (
         order.id
     )

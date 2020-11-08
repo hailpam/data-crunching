@@ -37,8 +37,8 @@ class Customer:
         Customer Item. It enlists relevant attributes related to the customr submitting
         a given order.
     '''
-    def __init__(self, name, address, zipcode, city, state, country_iso, email=None, identifier=None, phone=None, business_name=None):
-        self.id = identifier
+    def __init__(self, name, address, zipcode, city, state, country_iso, email=None, identifier=None, phone=None, business_name=None, created_at=None, updated_at=None):
+        self.id = int(identifier)
         self.name = name_to_camelcase(name) if name else name
         self.address = name_to_camelcase(address) if address else address
         self.zipcode = zipcode
@@ -48,21 +48,23 @@ class Customer:
         self.email = email.lower() if email else 'No email'
         self.phone = phone if phone else 'No phone'
         self.business_name = name_to_camelcase(business_name) if business_name else 'No business name'
+        self.created_at = created_at if created_at else 'No creation date'
+        self.updated_at = updated_at if updated_at else 'No update date'
     
     def to_header(self):
         '''
             Header columns formatting string.
         '''
-        return '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' % ('c.name', 'c.id', 'c.address', 'c.zipcode', 'c.city', 'c.state', 'c.country_iso', 'c.email', 'c.phone', 'c.business_name')
+        return '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' % ('c.name', 'c.id', 'c.address', 'c.zipcode', 'c.city', 'c.state', 'c.country_iso', 'c.email', 'c.phone', 'c.business_name','c.created_at','c.updated_at')
 
     def to_csv(self):
         '''
             Export to CSV the deserialized version of the data.
         '''
-        return '\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (self.name, self.id, self.address, self.zipcode, self.city, self.state, self.country_iso, self.email, self.phone, self.business_name)
+        return '\"%s\",\"%d\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (self.name, self.id, self.address, self.zipcode, self.city, self.state, self.country_iso, self.email, self.phone, self.business_name, self.created_at, self.updated_at)
 
     def __str__(self):
-        return '%s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (self.name, self.id, self.address, self.zipcode, self.city, self.state, self.country_iso, self.email, self.phone, self.business_name)
+        return '%s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (self.name, self.id, self.address, self.zipcode, self.city, self.state, self.country_iso, self.email, self.phone, self.business_name, self.created_at, self.updated_at)
 
 class Shipment:
     '''
@@ -125,10 +127,10 @@ class Order:
         '''
             Export to CSV the deserialized version of the data.
         '''
-        return '%s,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (int(self.id), self.date, self.time, self.number, self.code, self.payment_type, self.paid, self.cod_value, self.nr_packages, self.nr_payments)
+        return '\"%d\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%d\",\"%d\"' % (self.id, self.date, self.time, self.number, self.code, self.payment_type, self.paid, self.cod_value, self.nr_packages, self.nr_payments)
 
     def __str__(self):
-        s = '%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s\n' % (self.id, self.date, self.time, self.number, self.code, self.payment_type, self.paid, self.cod_value, self.nr_packages, self.nr_payments, self.customer)
+        s = '%d, %s, %s, %s, %s, %s, %s, %s, %d, %d, %s\n' % (self.id, self.date, self.time, self.number, self.code, self.payment_type, self.paid, self.cod_value, self.nr_packages, self.nr_payments, self.customer)
         s += '\t%s\n' % self.customer
         s += '\t%s\n' % self.shipment
         for item in self.items:

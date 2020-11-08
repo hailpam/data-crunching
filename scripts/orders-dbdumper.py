@@ -18,6 +18,7 @@ def parse_arguments():
     parser.add_argument('-k', '--key', type=str, required=True, help='API key to be used to perform the REST request to the backend.')
     parser.add_argument('-l', '--locale', type=str, required=False, help='Specify the locale: it_IT for italian. Otherwise machine default one.')
     parser.add_argument('-p', '--path', type=str, required=True, help='Define datastore base path to csv/ and db/ folders (csv/ and db/ folders should be already created).')
+    parser.add_argument('-c', '--customer', type=int, required=False, help='Define whether the customer table should be updated contextually: it requires the number of cycles per page (max 50 records')
 
     args = parser.parse_args()
     
@@ -36,7 +37,15 @@ def main():
     if not is_path_existent('%s/%s' % (datastore_path, 'db')):
         sys.exit(1)
     
-    orders = load_orders_database(args.key)
+    # load or refresh the customer table for enrichment
+    if args.customer:
+        customers = load_customers_pages(args.key, args.customer)
+        persist_customers_to_sqlite(customers, datastore_path)
+    
+    # looking up the customers for successive enrichment of orders
+    lookup = lookup_customers(datastore_path)
+    
+    orders = load_orders_database(args.key, lookup)
     print('info: loaded %d order(s)...' % len(orders))
     print(orders[0])
     print('info: all records between FIRST and LAST\n')

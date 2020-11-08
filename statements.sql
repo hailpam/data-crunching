@@ -3,7 +3,7 @@ DROP TABLE orders;
 
 -- CREATE TABLE orders
 CREATE TABLE orders (
-    o_order_id int NOT NULL PRIMARY KEY,
+    o_order_id int,
     o_date text,
     o_time text,
     o_number text,
@@ -14,7 +14,7 @@ CREATE TABLE orders (
     o_nr_packages text,
     o_nr_payments text,
     c_name text,
-    c_id text,
+    c_id int,
     c_address text,
     c_zipcode text,
     c_city text,
@@ -23,6 +23,8 @@ CREATE TABLE orders (
     c_email text,
     c_phone text,
     c_business_name text,
+    c_created_at text,
+    c_updated_at text,
     i_product_id text,
     i_sku text,
     i_name text,
@@ -46,7 +48,7 @@ CREATE TABLE orders (
 
 CREATE TABLE customers (
     c_name text,
-    c_id text NOT NULL PRIMARY KEY,
+    c_id int,
     c_address text,
     c_zipcode text,
     c_city text,
@@ -54,7 +56,9 @@ CREATE TABLE customers (
     c_country_iso text,
     c_email text,
     c_phone text,
-    c_business_name text
+    c_business_name text,
+    c_created_at text,
+    c_updated_at text
 );
 
 -- UPDATE row
