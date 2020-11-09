@@ -131,7 +131,7 @@ def load_orders_database(api_key, lookup):
     for itr in range(iterations):
         timer = Timer(time.time())
         params = 'limit=%d&offset=%d' % (NR_RECORDS_LIMIT_PER_CALL, itr * NR_RECORDS_LIMIT_PER_CALL)
-        res = retryable_get(BASE_URL, API_URI, METHOD, api_key, params)
+        res = retryable_get(BASE_URL, ORDERS_API_URI, METHOD, api_key, params)
         
         print('info: iteration %d out of %d: took %dms' % (itr+1, iterations, timer.elapsed_ms()))
         if res.status_code != 200 or 'error' in res.text:
@@ -182,7 +182,7 @@ def load_customers_pages(api_key, nr_cycles):
         
         customers = json.loads(res.text)
         if len(customers) == 0:
-            print('warning: got to have 0 customers, so far retrieve %d customer(s)' % len(loaded_customers))
+            print('warning: got to have 0 customers, so far retrieved %d customer(s)' % len(loaded_customers))
             return loaded_customers
 
         deserialize_customers(customers, loaded_customers)
