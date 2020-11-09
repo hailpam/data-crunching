@@ -111,7 +111,7 @@ def find_last_order(api_key):
         Find the last inserted order. According to its ID, the database is going to be rebuilt.
     '''
     params = 'limit=%d&offset=%d' % (1, 0)
-    res = retryable_get(BASE_URL, API_URI, METHOD, api_key, params)
+    res = retryable_get(BASE_URL, ORDERS_API_URI, METHOD, api_key, params)
     
     if res.status_code != 200 or 'error' in res.text:
         print('error: not able to fetch data: %s' % res.text)
