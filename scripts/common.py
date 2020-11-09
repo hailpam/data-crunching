@@ -181,6 +181,10 @@ def load_customers_pages(api_key, nr_cycles):
             raise Exception(res.text)
         
         customers = json.loads(res.text)
+        if len(customers) == 0:
+            print('warning: got to have 0 customers, so far retrieve %d customer(s)' % len(loaded_customers))
+            return loaded_customers
+
         deserialize_customers(customers, loaded_customers)
     
     print('info: laoded %d customer(s)' % len(loaded_customers))

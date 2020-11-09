@@ -130,3 +130,6 @@ dmypy.json
 
 # Exclude CSV files
 *.csv
+
+# Exluce SQLite files
+*.db
