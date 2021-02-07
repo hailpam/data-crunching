@@ -41,6 +41,7 @@ def deserialize_orders(orders, loaded_orders, lookup):
             c.business_name = l.business_name
             c.created_at = l.created_at
             c.updated_at = l.updated_at
+            c.vat = l.vat
         s = Shipment(order['weight'], order['shipping_date'], order['carrier'], order['shipped'], order['shipping_confirmed'], order['fees']['shipping'], order['fees']['payment'], order['fees']['extra'], order['locked'], order['canceled'], order['locked'])
         o = Order(order['id'], order['date'], order['number'], order['code'], order['payment_type'], c, s, order['paid'], order['cod_value'], order['packages'], order['payments'])
         rows = order['rows']
@@ -66,8 +67,9 @@ def deserialize_customers(customers, loaded_customers):
         business_name = customer['business_name']
         created_at = customer['created']
         updated_at = customer['last_update']
+        vat = customer['vat']
 
-        c = Customer(name, address, zipcode, city, state, country_iso, email, identifier, phone, business_name, created_at, updated_at)
+        c = Customer(name, address, zipcode, city, state, country_iso, email, identifier, phone, business_name, created_at, updated_at, vat)
         loaded_customers.append(c)
 
 def lookup_customers(base_path):
@@ -96,7 +98,8 @@ def lookup_customers(base_path):
             business_name = row[9]
             created_at = row[10]
             updated_at = row[11]
-            c = Customer(name, address, zipcode, city, state, country_iso, email, identifier, phone, business_name, created_at, updated_at) 
+            vat = row[12]
+            c = Customer(name, address, zipcode, city, state, country_iso, email, identifier, phone, business_name, created_at, updated_at, vat) 
             customers[identifier] = c
     except Exception as e:
         print('error: it was not possible to lookup customers: %s' % e)
@@ -323,7 +326,6 @@ def persist_customers_to_sqlite(customers, base_path):
         
         print('info: SQLite persisted successfully %d Customer record(s)' % len(customers))
     except Exception as e:
-        # TODO don't fail for a single bad formatted customer, e.g. ""
         print('error: unable to load SQLite database: %s' % e)
     finally:
         if conn:

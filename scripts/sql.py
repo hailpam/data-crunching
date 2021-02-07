@@ -26,6 +26,7 @@ CREATE TABLE orders (
     c_business_name text,
     c_created_at text,
     c_updated_at text,
+    c_vat text,
     i_product_id text,
     i_sku text,
     i_name text,
@@ -61,7 +62,8 @@ CREATE TABLE customers (
     c_phone text,
     c_business_name text,
     c_created_at text,
-    c_updated_at text
+    c_updated_at text,
+    c_vat text
 );
 """
 
@@ -92,6 +94,7 @@ SET o_date = "%s",
     c_business_name = "%s",
     c_created_at = "%s",
     c_updated_at = "%s",
+    c_vat = "%s",
     i_product_id = "%s",
     i_sku = "%s",
     i_name = "%s",
@@ -127,7 +130,8 @@ SET c_name = "%s",
     c_phone = "%s",
     c_business_name = "%s",
     c_created_at ="%s",
-    c_updated_at ="%s"
+    c_updated_at ="%s",
+    c_vat="%s"
 WHERE
     c_id = %d
 """
@@ -183,6 +187,7 @@ def update_record_orders(order, item):
         order.customer.business_name,
         order.customer.created_at,
         order.customer.updated_at,
+        order.customer.vat,
         item.product_id,
         item.sku,
         item.name,
@@ -218,6 +223,7 @@ def update_records_customers(customer):
         customer.business_name,
         customer.created_at,
         customer.updated_at,
+        customer.vat,
         customer.id
     )
 

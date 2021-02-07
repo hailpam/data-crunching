@@ -25,6 +25,7 @@ CREATE TABLE orders (
     c_business_name text,
     c_created_at text,
     c_updated_at text,
+    c_vat text,
     i_product_id text,
     i_sku text,
     i_name text,
@@ -46,6 +47,7 @@ CREATE TABLE orders (
     s_locked text
 );
 
+-- CREATE TABLE customers
 CREATE TABLE customers (
     c_name text,
     c_id int,
@@ -58,7 +60,8 @@ CREATE TABLE customers (
     c_phone text,
     c_business_name text,
     c_created_at text,
-    c_updated_at text
+    c_updated_at text,
+    c_vat text
 );
 
 -- UPDATE row

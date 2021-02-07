@@ -37,11 +37,10 @@ class Customer:
         Customer Item. It enlists relevant attributes related to the customr submitting
         a given order.
     '''
-    def __init__(self, name, address, zipcode, city, state, country_iso, email=None, identifier=None, phone=None, business_name=None, created_at=None, updated_at=None):
+    def __init__(self, name, address, zipcode, city, state, country_iso, email=None, identifier=None, phone=None, business_name=None, created_at=None, updated_at=None, vat=None):
         self.id = int(identifier)
         self.name = name_to_camelcase(name) if name else name
-        self.address = name_to_camelcase(address) if address else address
-        self.address = self.address.replace('"', '\'')
+        self.address = name_to_camelcase(address).replace('"', '\'') if address else address.replace('"', '\'')
         self.zipcode = zipcode
         self.city = name_to_camelcase(city) if city else city
         self.state = state.upper() if state else state
@@ -51,21 +50,22 @@ class Customer:
         self.business_name = name_to_camelcase(business_name) if business_name else 'No business name'
         self.created_at = created_at if created_at else 'No creation date'
         self.updated_at = updated_at if updated_at else 'No update date'
+        self.vat = vat if vat else 'No VAT'
     
     def to_header(self):
         '''
             Header columns formatting string.
         '''
-        return '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' % ('c.name', 'c.id', 'c.address', 'c.zipcode', 'c.city', 'c.state', 'c.country_iso', 'c.email', 'c.phone', 'c.business_name','c.created_at','c.updated_at')
+        return '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' % ('c.name', 'c.id', 'c.address', 'c.zipcode', 'c.city', 'c.state', 'c.country_iso', 'c.email', 'c.phone', 'c.business_name','c.created_at','c.updated_at','c.vat')
 
     def to_csv(self):
         '''
             Export to CSV the deserialized version of the data.
         '''
-        return '\"%s\",\"%d\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (self.name, self.id, self.address, self.zipcode, self.city, self.state, self.country_iso, self.email, self.phone, self.business_name, self.created_at, self.updated_at)
+        return '\"%s\",\"%d\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"' % (self.name, self.id, self.address, self.zipcode, self.city, self.state, self.country_iso, self.email, self.phone, self.business_name, self.created_at, self.updated_at, self.vat)
 
     def __str__(self):
-        return '%s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (self.name, self.id, self.address, self.zipcode, self.city, self.state, self.country_iso, self.email, self.phone, self.business_name, self.created_at, self.updated_at)
+        return '%s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (self.name, self.id, self.address, self.zipcode, self.city, self.state, self.country_iso, self.email, self.phone, self.business_name, self.created_at, self.updated_at, self.vat)
 
 class Shipment:
     '''
