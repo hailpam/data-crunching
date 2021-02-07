@@ -103,7 +103,7 @@ class Order:
     '''
         Order item. It enlists relevant attributes related to the order itself.
     '''
-    def __init__(self, order_id, date, number, code, payment_type, customer, shipment, paid=None, cod_value=None, nr_packages=None, nr_payments=None):
+    def __init__(self, order_id, date, number, code, payment_type, customer, shipment, paid=None, cod_value=None, nr_packages=None, nr_payments=None, canceled=False):
         self.id = int(order_id)
         self.date = date.split('T')[0]
         self.time = date.split('T')[1]
@@ -117,21 +117,22 @@ class Order:
         self.cod_value = cod_value if cod_value else 'No code value'
         self.nr_packages = len(nr_packages) if nr_packages else 0
         self.nr_payments = len(nr_payments) if nr_payments else 0
+        self.canceled = canceled
     
     def to_header(self):
         '''
             Header columns formatting string.
         '''
-        return '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' % ('o.order_id', 'o.date', 'o.time', 'o.number', 'o.code', 'o.payment_type', 'o.paid', 'o.code_value', 'o.nr_packages', 'o.nr_payments')
+        return '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s' % ('o.order_id', 'o.date', 'o.time', 'o.number', 'o.code', 'o.payment_type', 'o.paid', 'o.code_value', 'o.nr_packages', 'o.nr_payments', 'o.canceled')
 
     def to_csv(self):
         '''
             Export to CSV the deserialized version of the data.
         '''
-        return '\"%d\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%d\",\"%d\"' % (self.id, self.date, self.time, self.number, self.code, self.payment_type, self.paid, self.cod_value, self.nr_packages, self.nr_payments)
+        return '\"%d\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%d\",\"%d\",\"%d\"' % (self.id, self.date, self.time, self.number, self.code, self.payment_type, self.paid, self.cod_value, self.nr_packages, self.nr_payments, self.canceled)
 
     def __str__(self):
-        s = '%d, %s, %s, %s, %s, %s, %s, %s, %d, %d, %s\n' % (self.id, self.date, self.time, self.number, self.code, self.payment_type, self.paid, self.cod_value, self.nr_packages, self.nr_payments, self.customer)
+        s = '%d, %s, %s, %s, %s, %s, %s, %s, %d, %d, %s\n' % (self.id, self.date, self.time, self.number, self.code, self.payment_type, self.paid, self.cod_value, self.nr_packages, self.nr_payments, self.canceled)
         s += '\t%s\n' % self.customer
         s += '\t%s\n' % self.shipment
         for item in self.items:

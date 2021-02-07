@@ -13,6 +13,7 @@ CREATE TABLE orders (
     o_code_value text,
     o_nr_packages text,
     o_nr_payments text,
+    o_canceled boolean,
     c_name text,
     c_id int,
     c_address text,
