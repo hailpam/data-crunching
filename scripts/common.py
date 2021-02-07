@@ -310,11 +310,14 @@ def persist_customers_to_sqlite(customers, base_path):
             ids.add(int(row[0]))
         cntr = 0
         for customer in customers:
-            if int(customer.id) in ids:
-                cntr += 1
-                conn.execute(update_records_customers(customer))
-            else:
-                conn.execute(insert_record_customers(customer))
+            try:
+                if int(customer.id) in ids:
+                    cntr += 1
+                    conn.execute(update_records_customers(customer))
+                else:
+                    conn.execute(insert_record_customers(customer))
+            except Exception as e:
+                print('error: client [%s] cannot be inserted: %s' % (customer, e))
         if cntr > 0:
             print('warning: %s row(s) were duplicated: update was made' % cntr)
         
