@@ -41,6 +41,7 @@ class Customer:
         self.id = int(identifier)
         self.name = name_to_camelcase(name) if name else name
         self.address = name_to_camelcase(address) if address else address
+        self.address = self.address.replace('"', '\'')
         self.zipcode = zipcode
         self.city = name_to_camelcase(city) if city else city
         self.state = state.upper() if state else state

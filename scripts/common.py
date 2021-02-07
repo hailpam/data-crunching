@@ -320,6 +320,7 @@ def persist_customers_to_sqlite(customers, base_path):
         
         print('info: SQLite persisted successfully %d Customer record(s)' % len(customers))
     except Exception as e:
+        # TODO don't fail for a single bad formatted customer, e.g. ""
         print('error: unable to load SQLite database: %s' % e)
     finally:
         if conn:
