@@ -43,7 +43,7 @@ def deserialize_orders(orders, loaded_orders, lookup):
             c.updated_at = l.updated_at
             c.vat = l.vat
         s = Shipment(order['weight'], order['shipping_date'], order['carrier'], order['shipped'], order['shipping_confirmed'], order['fees']['shipping'], order['fees']['payment'], order['fees']['extra'], order['locked'], order['canceled'], order['locked'])
-        o = Order(order['id'], order['date'], order['number'], order['code'], order['payment_type'], c, s, order['paid'], order['cod_value'], order['packages'], order['payments'])
+        o = Order(order['id'], order['date'], order['number'], order['code'], order['payment_type'], c, s, order['paid'], order['cod_value'], order['packages'], order['payments'], canceled=(True if order['canceled'] == "1" or order["locked"] == "1" else False))
         rows = order['rows']
         for row in rows:
             i = Item(row['id'], row['sku'], row['name'], row['price'], row['discount'], row['tax_id'], row['tax'], row['quantity'])
